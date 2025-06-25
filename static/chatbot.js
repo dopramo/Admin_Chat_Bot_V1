@@ -25,7 +25,14 @@ async function liveSuggestions() {
     });
     suggestionBox.style.display = "block";
   } else {
-    suggestionBox.style.display = "none";
+    // Show "No matches found." in the suggestion box
+    const div = document.createElement("div");
+    div.className = "suggestion-item";
+    div.style.color = "#888";
+    div.style.cursor = "default";
+    div.textContent = "No matches found.";
+    suggestionBox.appendChild(div);
+    suggestionBox.style.display = "block";
   }
 }
 
