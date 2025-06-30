@@ -80,4 +80,4 @@ def suggest_get():
     return jsonify(menus)
 
 if __name__ == "__main__":
-    app.run(ssl_context=('localhost+2.pem', 'localhost+2-key.pem'), debug=True)
+    app.run()
