@@ -7,12 +7,17 @@ async function liveSuggestions() {
     return;
   }
 
-  const res = await fetch(`/suggest?q=${encodeURIComponent(input)}`);
+  const res = await fetch(`/suggest?q=${encodeURIComponent(input)}`, {
+    method: "GET",
+    credentials: "include", // Important!
+    headers: { "Content-Type": "application/json" },
+  });
+
   const data = await res.json();
 
   suggestionBox.innerHTML = "";
   if (data.length > 0) {
-    data.forEach(item => {
+    data.forEach((item) => {
       const div = document.createElement("div");
       div.className = "suggestion-item";
       div.textContent = item.title;
@@ -73,8 +78,10 @@ async function handleUserInput() {
   document.getElementById("userInput").focus();
 
   // Start both the fetch and the delay at the same time
-  const fetchPromise = fetch(`/suggest?q=${encodeURIComponent(input)}`).then(res => res.json());
-  const delayPromise = new Promise(res => setTimeout(res, 600));
+  const fetchPromise = fetch(`/suggest?q=${encodeURIComponent(input)}`).then(
+    (res) => res.json()
+  );
+  const delayPromise = new Promise((res) => setTimeout(res, 600));
   const [data] = await Promise.all([fetchPromise, delayPromise]);
 
   // Remove thinking indicator
@@ -83,13 +90,19 @@ async function handleUserInput() {
   // Bot response (left side)
   if (data.length) {
     for (const item of data) {
-      await new Promise(res => setTimeout(res, 120)); // smooth delay between each menu
+      await new Promise((res) => setTimeout(res, 120)); // smooth delay between each menu
       const botBubble = document.createElement("div");
       botBubble.className = "bubble bot";
       botBubble.innerHTML = `
         <b>${item.title}</b><br>
-        <span>${item.description ? item.description.replace(/\.? ?Follow Link:.*$/, '.') : ''}</span><br>
-        <a href="${item.url}" target="_blank" class="follow-link-btn">Follow Link</a>
+        <span>${
+          item.description
+            ? item.description.replace(/\.? ?Follow Link:.*$/, ".")
+            : ""
+        }</span><br>
+        <a href="${
+          item.url
+        }" target="_blank" class="follow-link-btn">Follow Link</a>
       `;
       chatLog.appendChild(botBubble);
       chatLog.scrollTop = chatLog.scrollHeight;
